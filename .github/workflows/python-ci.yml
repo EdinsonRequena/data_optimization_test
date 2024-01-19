@@ -8,20 +8,42 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.10'  # Asegúrate de usar la versión de Python que estés utilizando
+        python-version: '3.10'
+
+    - name: Cache Pipenv virtualenv
+      uses: actions/cache@v2
+      with:
+        path: ~/.local/share/virtualenvs
+        key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pipenv-
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pipenv
         pipenv install --dev
-    - name: Test with pytest
+
+    - name: Lint with pylint
       run: |
-        pipenv run pytest
+        pipenv run pylint data_optimization/**/*.py
+
+    - name: Run tests with coverage
+      run: |
+        pipenv run pytest --cov=data_optimization --cov-report=xml
+
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      with:
+        projectBaseDir: .  # Asegúrate de que esta es la ruta base de tu proyecto
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

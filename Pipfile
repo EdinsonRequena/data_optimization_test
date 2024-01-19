@@ -10,6 +10,11 @@ pylint = "*"
 coverage = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-cov = "*"
+python-dotenv = "*"
+autopep8 = "*"
+isort = "*"
 
 [requires]
 python_version = "3.10"
