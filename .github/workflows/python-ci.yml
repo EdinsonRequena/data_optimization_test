@@ -14,11 +14,9 @@ jobs:
       postgres:
         image: postgres:12
         env:
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASS }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
+          POSTGRES_DB: test_db_name
+          POSTGRES_USER: test_db_user
+          POSTGRES_PASSWORD: test_db_password
         ports:
           - 5432:5432
         options: >-
@@ -59,9 +57,9 @@ jobs:
 
     - name: Run tests
       env:
-        DB_NAME: test_name
-        DB_USER: test_user
-        DB_PASS: test_pass
+        DB_NAME: test_db_name
+        DB_USER: test_db_user
+        DB_PASS: test_db_password
         DB_HOST: localhost
         DB_PORT: 5432
       run: |
