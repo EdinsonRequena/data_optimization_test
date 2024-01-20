@@ -47,7 +47,21 @@ jobs:
         pip install pipenv
         pipenv install --dev
 
+    - name: Wait for PostgreSQL to become available
+      run: |
+        until pg_isready -h localhost -p 5432; do
+          echo "Waiting for PostgreSQL to become available..."
+          sleep 2
+        done
+        echo "PostgreSQL is available now"
+
     - name: Run tests with coverage
+      env:
+        DB_HOST: localhost
+        DB_PORT: 5432
+        DB_NAME: ${{ secrets.DB_NAME }}
+        DB_USER: ${{ secrets.DB_USER }}
+        DB_PASS: ${{ secrets.DB_PASS }}
       run: |
         pipenv run pytest --cov=data_optimization --cov-report=xml
 
