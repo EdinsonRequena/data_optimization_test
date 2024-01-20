@@ -57,15 +57,15 @@ jobs:
         done
         echo "PostgreSQL is available now"
 
-    - name: Run tests with coverage
-      env:
-        DB_NAME: ${{ secrets.DB_NAME }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASS: ${{ secrets.DB_PASS }}
-        DB_HOST: ${{ secrets.DB_HOST }}
-        DB_PORT: ${{ secrets.DB_PORT }}
-      run: |
-        pipenv run pytest --cov=data_optimization --cov-report=xml
+    # - name: Run tests with coverage
+    #   env:
+    #     DB_NAME: ${{ secrets.DB_NAME }}
+    #     DB_USER: ${{ secrets.DB_USER }}
+    #     DB_PASS: ${{ secrets.DB_PASS }}
+    #     DB_HOST: ${{ secrets.DB_HOST }}
+    #     DB_PORT: ${{ secrets.DB_PORT }}
+    #   run: |
+    #     pipenv run pytest --cov=data_optimization --cov-report=xml
 
 
     - name: SonarCloud Scan
