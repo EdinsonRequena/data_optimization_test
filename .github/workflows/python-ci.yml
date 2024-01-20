@@ -62,7 +62,7 @@ jobs:
 
     - name: Check PostgreSQL service
       run: |
-        pg_isready -h localhost -p 5432
+        pg_isready -h localhost -p 5432 -U test_db_user
 
     - name: Run tests with coverage
       env:
@@ -73,7 +73,6 @@ jobs:
         DB_PORT: ${{ secrets.DB_PORT }}
       run: |
         pipenv run pytest --cov=data_optimization --cov-report=xml
-
 
     - name: SonarCloud Scan
       uses: sonarsource/sonarcloud-github-action@master
