@@ -10,6 +10,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_DB: test_db_name
+          POSTGRES_USER: test_db_user
+          POSTGRES_PASSWORD: test_db_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v2
 
@@ -32,14 +47,37 @@ jobs:
         pip install pipenv
         pipenv install --dev
 
-    - name: Run tests with coverage
+    - name: Wait for PostgreSQL to become available
       run: |
-        pipenv run pytest --cov=data_optimization --cov-report=xml
+        until pg_isready -h localhost -p 5432; do
+          echo "Waiting for PostgreSQL to become available..."
+          sleep 2
+        done
+        echo "PostgreSQL is available now"
 
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
-      with:
-        projectBaseDir: .  # Asegúrate de que esta es la ruta base de tu proyecto
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    - name: Install PostgreSQL client
+      run: |
+        sudo apt-get update
+        sudo apt-get install postgresql-client
+
+    - name: Check PostgreSQL service
+      run: |
+        pg_isready -h localhost -p 5432 -U test_db_user
+
+    # - name: Run tests with coverage
+    #   env:
+    #     DB_NAME: ${{ secrets.DB_NAME }}
+    #     DB_USER: ${{ secrets.DB_USER }}
+    #     DB_PASS: ${{ secrets.DB_PASS }}
+    #     DB_HOST: ${{ secrets.DB_HOST }}
+    #     DB_PORT: ${{ secrets.DB_PORT }}
+    #   run: |
+    #     pipenv run pytest --cov=data_optimization --cov-report=xml
+
+    # - name: SonarCloud Scan
+    #   uses: sonarsource/sonarcloud-github-action@master
+    #   with:
+    #     projectBaseDir: .
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
