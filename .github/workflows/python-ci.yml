@@ -59,11 +59,11 @@ jobs:
 
     - name: Run tests
       env:
-        DB_NAME: ${{ secrets.DB_NAME }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASS: ${{ secrets.DB_PASS }}
-        DB_HOST: ${{ secrets.DB_HOST }}
-        DB_PORT: ${{ secrets.DB_PORT }}
+        DB_NAME: test_name
+        DB_USER: test_user
+        DB_PASS: test_pass
+        DB_HOST: localhost
+        DB_PORT: 5432
       run: |
         pipenv run pytest
 
