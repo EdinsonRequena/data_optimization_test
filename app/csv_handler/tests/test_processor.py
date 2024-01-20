@@ -25,18 +25,29 @@ Store2;ProductB;2024-01-02;150"""
     return str(file)
 
 
-def test_read_csv(test_csv_file):  # pylint: disable=redefined-outer-name
+def test_read_csv_with_invalid_file():
     """
-    Test case for the read_csv function.
+    Test case for the read_csv function with an invalid file path.
+    """
+    with pytest.raises(FileNotFoundError):
+        read_csv("invalid_file_path.csv")
+
+
+def test_read_csv_with_valid_file(test_csv_file):
+    """
+    Test case for the read_csv function with a valid file path.
 
     Parameters:
     - test_csv_file: str
         The path to the test CSV file.
     """
-
     df = read_csv(test_csv_file)
 
-    # Crear un DataFrame esperado
+    # Verify that the DataFrame has the expected columns
+    expected_columns = ['PointOfSale', 'Product', 'Date', 'Stock']
+    assert list(df.columns) == expected_columns
+
+    # Verify that the DataFrame has the expected data
     expected_data = {
         'PointOfSale': ['Store1', 'Store2'],
         'Product': ['ProductA', 'ProductB'],
@@ -44,6 +55,4 @@ def test_read_csv(test_csv_file):  # pylint: disable=redefined-outer-name
         'Stock': [100, 150]
     }
     expected_df = pd.DataFrame(expected_data)
-
-    # Verificar que el DataFrame leído sea igual al esperado
     assert_frame_equal(df, expected_df)
