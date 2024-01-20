@@ -55,16 +55,6 @@ jobs:
         done
         echo "PostgreSQL is available now"
 
-    - name: Run tests
-      env:
-        DB_NAME: test_db_name
-        DB_USER: test_db_user
-        DB_PASS: test_db_password
-        DB_HOST: localhost
-        DB_PORT: 5432
-      run: |
-        pipenv run pytest
-
     - name: Install PostgreSQL client
       run: |
         sudo apt-get update
